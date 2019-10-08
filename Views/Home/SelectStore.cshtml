@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Itemtype>
+@{
+    ViewData["Title"] = "SelectStore";
+}
+
+    <div class="row justify-content-center">
+        
+        <div class="col-md-2">
+            
+            @foreach (var item in @Model)
+            {
+                <a class="btn btn-outline-primary btn-block" asp-controller="Home" asp-action="Privacy" asp-route-id="@item.Itemtypeid">@item.Itemtypename</a>
+            }
+        </div>
+
+        <div class="col-md-5 card border-light">
+            <div class="card-body">
+                Items
+            </div>
+        </div>
+
+        <div class="col-md-3 card border-dark shadow">
+            <div class="card-body">
+                List
+            </div>
+        </div>
+        
+    </div>
+

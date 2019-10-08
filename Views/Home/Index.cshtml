@@ -1,8 +1,24 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+    <div class="row">
+        <div class="col-4"></div>
+           <div class="col-4">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+               <form class="text-center" asp-controller="Home" asp-action="SelectStore">
+                   <div class="form-group">
+                       <label for="zipCode">Lets Get Started!</label>
+                       <input name="zip" type="text" class="form-control" id="zipCode" placeholder="Zip code...">
+                   </div>
+
+                   <select name ="store" class="mdb-select md-form">
+                       <option value="" disabled selected>Select a Store...</option>
+                       <option value="publix">Publix</option>
+                       <option value="aldi">Aldi</option>
+                   </select>
+                   <button class="btn-outline-primary">Go!</button>
+               </form>
+
+            </div>
+        <div class="col-4"></div>
+    </div>
