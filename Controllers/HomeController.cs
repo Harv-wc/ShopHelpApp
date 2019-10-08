@@ -39,13 +39,12 @@ namespace Shop_Help.Controllers
         }
         public IActionResult SelectStore(string store, int zip)
         {
-            
             Store = store;
             Zip = zip;
             return View(_dbContext.Itemtype);
         }
 
-        public IActionResult Privacy(int id)
+        public IActionResult Items(int id)
         {
             string name = categories[id];
             ViewBag.Name = name;
