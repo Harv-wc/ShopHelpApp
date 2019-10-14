@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shop_Help.Models;
+using Shop_Help.Models.ViewModel;
 
 namespace Shop_Help.Controllers
 {
@@ -18,6 +19,7 @@ namespace Shop_Help.Controllers
          */
         private readonly ShopHelpContext _dbContext;
         private readonly Dictionary<int, string> categories = new Dictionary<int, string>();
+        public ItemsViewModel itemsViewModel = new ItemsViewModel { };
         [TempData]
         public string Store { get; set; }
         [TempData]
@@ -27,9 +29,13 @@ namespace Shop_Help.Controllers
         public HomeController(ShopHelpContext dbContext)
         {
             _dbContext = dbContext;
-            foreach(var item in dbContext.Itemtype)
+            foreach (var item in dbContext.Itemtype)
             {
-                categories.Add(item.Itemtypeid, item.Itemtypename);
+                itemsViewModel.ItemTypes.Add(item.Itemtypeid, item.Itemtypename);
+            }
+            foreach (var item in dbContext.Items)
+            {
+                itemsViewModel.Items.Add(item);
             }
         }
 
@@ -37,20 +43,38 @@ namespace Shop_Help.Controllers
         {
             return View();
         }
-        public IActionResult SelectStore(string store, int zip)
+
+        
+        public IActionResult StoreItems(int id = 1, string store = "Default", int zip = 0)
         {
-            Store = store;
-            Zip = zip;
-            return View(_dbContext.Itemtype);
+
+            var name = itemsViewModel.ItemTypes[id];
+            // string name = categories[id];
+            if (store != "Default")
+            {
+                Store = store;
+            }
+            if (zip != 0)
+            {
+                Zip = zip;
+            }
+            
+            ViewBag.Name = name;
+            ViewBag.Store = TempData["Store"];
+            ViewBag.Zip = TempData["Zip"];
+            TempData.Keep("Store");
+            TempData.Keep("Zip");
+            return View(itemsViewModel); // needs model view containing ItemType and Items
         }
 
         public IActionResult Items(int id)
         {
             string name = categories[id];
             ViewBag.Name = name;
-            ViewBag.Store = Store;
-            ViewBag.Zip = Zip;
-
+            ViewBag.Store = TempData["Store"];
+            ViewBag.Zip = TempData["Zip"];
+            TempData.Keep("Store");
+            TempData.Keep("Zip");
             return View();
         }
 
