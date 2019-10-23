@@ -1,9 +1,16 @@
-﻿
+﻿@model Itemcost
 @{
     ViewData["Title"] = "Items";
 }
-<h1>@ViewData["Title"]</h1>
-
-@ViewBag.Name<br />
-@ViewBag.Store<br />
-@ViewBag.Zip<br />
+    <div class="col-lg-6 p-2">
+        <div class="card">
+            <div class="font-weight-bold card-title justify-content-center">
+                @Model.Item.Itemname
+            </div>
+            <div class="card-body">
+                @Model.Itemcost1<br />
+                <a class="btn btn-outline-success">Add</a>
+                <a class="btn btn-outline-danger">Remove</a>
+            </div>
+        </div>
+    </div>

@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Home Page";
 }
     <div class="row">
@@ -8,13 +9,17 @@
                <form class="text-center" asp-controller="Home" asp-action="StoreItems">
                    <div class="form-group">
                        <label for="zipCode">Lets Get Started!</label>
-                       <input name="zip" type="text" class="form-control" id="zipCode" placeholder="Zip code...">
+                       <input required onchange="getstores()" name="zip" type="text" class="form-control" id="zipCode" placeholder="Zip code...">
                    </div>
 
-                   <select name ="store" class="mdb-select md-form">
+                   <select name ="store" class="mdb-select md-form" id="store"> <!--Forms pass variables by name. 
+                                                                                    Follow store to call method and check int 
+                                                                                    value is passed properly and used in SQL 
+                                                                                    query to display proper price table values.-->
                        <option value="" disabled selected>Select a Store...</option>
-                       <option value="publix">Publix</option>
-                       <option value="aldi">Aldi</option>
+                       
+
+
                    </select>
                    <button class="btn-outline-primary">Go!</button>
                </form>
@@ -22,3 +27,18 @@
             </div>
         <div class="col-4"></div>
     </div>
+<script>
+    var stores;
+    function getstores() {
+        fetch("Home/GetStores?zip=" + $('#zipCode')[0].value)
+            .then(resp => resp.json())
+            .then(data => {
+                var select = document.getElementById("store")
+                select.options.length = 1
+                data.map((store, i) => {
+                    select.options[i+1] = new Option(store.storename, store.storeid)
+                })
+            })
+    }
+    
+</script>

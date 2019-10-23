@@ -21,7 +21,6 @@ namespace Shop_Help.Models
         public virtual DbSet<Locations> Locations { get; set; }
         public virtual DbSet<Stores> Stores { get; set; }
 
-        // Unable to generate entity type for table 'dbo.All_Items'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

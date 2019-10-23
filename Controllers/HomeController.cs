@@ -12,16 +12,12 @@ namespace Shop_Help.Controllers
 {
     public class HomeController : Controller
     {
-        /* Actions needed:
-         * -returns index with all cleared fields. My "Restart" action
-         * -returns index with zipcode entered. allows to select store from drop down menu. Zipcode action
-         * -returns index with selected store. Displays categories, and empty items window, and empty list.
-         */
+        
         private readonly ShopHelpContext _dbContext;
         private readonly Dictionary<int, string> categories = new Dictionary<int, string>();
         public ItemsViewModel itemsViewModel = new ItemsViewModel { };
         [TempData]
-        public string Store { get; set; }
+        public int Store { get; set; }
         [TempData]
         public int Zip { get; set; }
         
@@ -35,6 +31,7 @@ namespace Shop_Help.Controllers
             }
             foreach (var item in dbContext.Items)
             {
+                
                 itemsViewModel.Items.Add(item);
             }
         }
@@ -45,12 +42,12 @@ namespace Shop_Help.Controllers
         }
 
         
-        public IActionResult StoreItems(int id = 1, string store = "Default", int zip = 0)
+        public IActionResult StoreItems(int id = 1, int store = 0, int zip = 0) //change store to storeid pass int instead of string
         {
 
             var name = itemsViewModel.ItemTypes[id];
-            // string name = categories[id];
-            if (store != "Default")
+            
+            if (store != 0)
             {
                 Store = store;
             }
@@ -58,12 +55,18 @@ namespace Shop_Help.Controllers
             {
                 Zip = zip;
             }
-            
+
+            ViewBag.Table = from Itemcost in _dbContext.Itemcost
+                            join Items in _dbContext.Items on Itemcost.Itemid equals Items.Itemid
+                            where Itemcost.Storeid == store && Items.Itemtypeid == id
+                            select Itemcost;
+
             ViewBag.Name = name;
             ViewBag.Store = TempData["Store"];
             ViewBag.Zip = TempData["Zip"];
             TempData.Keep("Store");
             TempData.Keep("Zip");
+
             return View(itemsViewModel); // needs model view containing ItemType and Items
         }
 
@@ -76,6 +79,17 @@ namespace Shop_Help.Controllers
             TempData.Keep("Store");
             TempData.Keep("Zip");
             return View();
+        }
+        
+        public IActionResult GetStores(int zip)
+        {
+            var stores =
+                from Locations in _dbContext.Locations
+                join Stores in _dbContext.Stores on Locations.Locationid equals Stores.Locationid
+                where Locations.Zipcode == zip
+                select Stores;
+
+            return Json(stores);
         }
 
 
