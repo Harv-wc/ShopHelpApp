@@ -7,7 +7,7 @@
         
         <div class="col-md-2">
             
-            @foreach (var item in @Model.ItemTypes)//items are categories. key is categoryid.
+            @foreach (var item in ViewBag.Categories)//items are categories. key is categoryid.
             {
                 <a class="btn btn-outline-primary btn-block" asp-controller="Home" asp-action="StoreItems" asp-route-id="@item.Key">
                     @item.Value
@@ -18,16 +18,22 @@
         <div class="col-md-5 card border-light">
             <div class="row">
                 @foreach (var item in ViewBag.Table)
-                {
-                    @Html.Partial("Items", ((Itemcost)item))
-                    
-                }
+                    {
+                        @Html.Partial("Items", ((Itemcost)item))
+                    }
+                
             </div>
         </div>
 
         <div class="col-md-3 card border-dark shadow">
+            <div class="card-header">
+                @ViewBag.Store
+            </div>
             <div class="card-body">
-                List
+                Put items here...
+            </div>
+            <div class="card-footer">
+                footer here...
             </div>
         </div>
         

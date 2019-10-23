@@ -15,11 +15,12 @@ namespace Shop_Help.Controllers
         
         private readonly ShopHelpContext _dbContext;
         private readonly Dictionary<int, string> categories = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> stores = new Dictionary<int, string>();
         public ItemsViewModel itemsViewModel = new ItemsViewModel { };
         [TempData]
-        public int Store { get; set; }
+        public int Storeid { get; set; }
         [TempData]
-        public int Zip { get; set; }
+        public string StoreName { get; set; }
         
 
         public HomeController(ShopHelpContext dbContext)
@@ -27,12 +28,16 @@ namespace Shop_Help.Controllers
             _dbContext = dbContext;
             foreach (var item in dbContext.Itemtype)
             {
-                itemsViewModel.ItemTypes.Add(item.Itemtypeid, item.Itemtypename);
+                itemsViewModel.ItemTypes.Add(item.Itemtypeid, item.Itemtypename); // do not need -- will remove/replace
+                categories.Add(item.Itemtypeid, item.Itemtypename);
             }
-            foreach (var item in dbContext.Items)
+            foreach (var item in dbContext.Items) // do not need -- will remove/replace
             {
-                
                 itemsViewModel.Items.Add(item);
+            }
+            foreach(var item in dbContext.Stores)
+            {
+                stores.Add(item.Storeid, item.Storename);
             }
         }
 
@@ -42,42 +47,23 @@ namespace Shop_Help.Controllers
         }
 
         
-        public IActionResult StoreItems(int id = 1, int store = 0, int zip = 0) //change store to storeid pass int instead of string
+        public IActionResult StoreItems(int id = 1)
         {
-
-            var name = itemsViewModel.ItemTypes[id];
-            
-            if (store != 0)
-            {
-                Store = store;
-            }
-            if (zip != 0)
-            {
-                Zip = zip;
-            }
-
             ViewBag.Table = from Itemcost in _dbContext.Itemcost
                             join Items in _dbContext.Items on Itemcost.Itemid equals Items.Itemid
-                            where Itemcost.Storeid == store && Items.Itemtypeid == id
+                            where Itemcost.Storeid == Storeid && Items.Itemtypeid == id
                             select Itemcost;
+            
+            ViewBag.Categories = categories;
+            ViewBag.Store = TempData["StoreName"];
 
-            ViewBag.Name = name;
-            ViewBag.Store = TempData["Store"];
-            ViewBag.Zip = TempData["Zip"];
-            TempData.Keep("Store");
-            TempData.Keep("Zip");
-
-            return View(itemsViewModel); // needs model view containing ItemType and Items
+            TempData.Keep("StoreName");
+            TempData.Keep("Storeid");
+            return View(itemsViewModel); // change viewmodel to pass the generated list.
         }
 
-        public IActionResult Items(int id)
+        public IActionResult Items()
         {
-            string name = categories[id];
-            ViewBag.Name = name;
-            ViewBag.Store = TempData["Store"];
-            ViewBag.Zip = TempData["Zip"];
-            TempData.Keep("Store");
-            TempData.Keep("Zip");
             return View();
         }
         
@@ -90,6 +76,23 @@ namespace Shop_Help.Controllers
                 select Stores;
 
             return Json(stores);
+        }
+        public IActionResult SetStore(int store) // Only called by the index when first choosing a store. default id is for category.
+        {
+            Storeid = store;
+            StoreName = stores[store];
+
+            ViewBag.Table = from Itemcost in _dbContext.Itemcost
+                            join Items in _dbContext.Items on Itemcost.Itemid equals Items.Itemid
+                            where Itemcost.Storeid == Storeid && Items.Itemtypeid == 0
+                            select Itemcost;
+
+            ViewBag.Store = TempData["StoreName"];
+            ViewBag.Categories = categories;
+
+            TempData.Keep("StoreName");
+            TempData.Keep("Storeid");
+            return View("StoreItems");
         }
 
 

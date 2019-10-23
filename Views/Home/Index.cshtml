@@ -6,27 +6,23 @@
         <div class="col-4"></div>
            <div class="col-4">
 
-               <form class="text-center" asp-controller="Home" asp-action="StoreItems">
+               <form class="text-center" asp-controller="Home" asp-action="SetStore" asp-route-id="store">
                    <div class="form-group">
                        <label for="zipCode">Lets Get Started!</label>
                        <input required onchange="getstores()" name="zip" type="text" class="form-control" id="zipCode" placeholder="Zip code...">
                    </div>
 
-                   <select name ="store" class="mdb-select md-form" id="store"> <!--Forms pass variables by name. 
-                                                                                    Follow store to call method and check int 
-                                                                                    value is passed properly and used in SQL 
-                                                                                    query to display proper price table values.-->
+                   <select name ="store" class="mdb-select md-form" id="store"> 
                        <option value="" disabled selected>Select a Store...</option>
-                       
-
-
                    </select>
+
                    <button class="btn-outline-primary">Go!</button>
                </form>
 
             </div>
         <div class="col-4"></div>
     </div>
+
 <script>
     var stores;
     function getstores() {
