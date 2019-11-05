@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shop_Help.Models;
 using Shop_Help.Models.ViewModel;
 
@@ -21,7 +22,20 @@ namespace Shop_Help.Controllers
         public int Storeid { get; set; }
         [TempData]
         public string StoreName { get; set; }
+
+        [TempData]
+        public List<string> SavedItems { get; set; } = new List<string>();
+        [TempData]
+        public string TempName { get; set; }
+
+        [TempData]
+        public Dictionary<string, int> Qty { get; set; } = new Dictionary<string, int>();
         
+        [TempData]
+        public Dictionary<string, decimal> Cost { get; set; } = new Dictionary<string, decimal>();
+        [TempData]
+        public decimal TempCost { get; set; }
+
 
         public HomeController(ShopHelpContext dbContext)
         {
@@ -46,6 +60,45 @@ namespace Shop_Help.Controllers
             return View();
         }
 
+        public IActionResult UpdateShoppingList(int value, string name, decimal cost)
+        {
+            TempName = name;
+            TempCost = cost;
+            SavedItems.Add(TempName);
+            /*
+            if (value == 1) // adding item
+            {
+                if (SavedItems.Contains(name))
+                {
+                    Qty[name]++;
+                }
+                else
+                {
+                    SavedItems.Add(name);
+                    Qty.Add(name, 1);
+                    Cost.Add(name, cost);
+                }
+            }
+            else
+            {
+                if (SavedItems.Contains(name) && Qty[name] > 0)
+                {
+                    Qty[name]--;
+                }
+                if (SavedItems.Contains(name) && Qty[name] == 0)
+                {
+                    SavedItems.Remove(name);
+                    Qty.Remove(name);
+                    Cost.Remove(name);
+                }
+            }
+            */
+
+            TempData.Keep("SavedItems");
+            TempData.Keep("Qty");
+            TempData.Keep("Cost");
+            return RedirectToAction("StoreItems");
+        }
         
         public IActionResult StoreItems(int id = 1)
         {
@@ -57,6 +110,13 @@ namespace Shop_Help.Controllers
             ViewBag.Categories = categories;
             ViewBag.Store = TempData["StoreName"];
 
+            ViewBag.SavedItems = TempData["SavedItems"] as List<string>;
+            ViewBag.Qty = TempData["Qty"] as Dictionary<string, int>;
+            ViewBag.Cost = TempData["Cost"] as Dictionary<string, decimal>;
+
+            TempData.Keep("SavedItems");
+            TempData.Keep("Qty");
+            TempData.Keep("Cost");
             TempData.Keep("StoreName");
             TempData.Keep("Storeid");
             return View(itemsViewModel); // change viewmodel to pass the generated list.
@@ -77,7 +137,7 @@ namespace Shop_Help.Controllers
 
             return Json(stores);
         }
-        public IActionResult SetStore(int store) // Only called by the index when first choosing a store. default id is for category.
+        public IActionResult SetStore(int store) // Only called by the index when first choosing a store.
         {
             Storeid = store;
             StoreName = stores[store];
@@ -86,6 +146,7 @@ namespace Shop_Help.Controllers
                             join Items in _dbContext.Items on Itemcost.Itemid equals Items.Itemid
                             where Itemcost.Storeid == Storeid && Items.Itemtypeid == 0
                             select Itemcost;
+
 
             ViewBag.Store = TempData["StoreName"];
             ViewBag.Categories = categories;

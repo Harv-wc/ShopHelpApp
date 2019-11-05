@@ -25,15 +25,24 @@
             </div>
         </div>
 
-        <div class="col-md-3 card border-dark shadow">
-            <div class="card-header">
-                @ViewBag.Store
-            </div>
-            <div class="card-body">
-                Put items here...
-            </div>
-            <div class="card-footer">
-                footer here...
+        <div class="col-md-3">
+            <div class="card border-dark shadow">
+                <div class="card-header">
+                    @ViewBag.Store
+                </div>
+                <div class="card-body">
+                    Put items here...
+                    @if (ViewBag.SavedItems != null)
+                    {
+                        @foreach (var item in ViewBag.SavedItems)
+                        {
+                            @item
+                        }
+                    }
+                </div>
+                <div class="card-footer">
+                    footer here...
+                </div>
             </div>
         </div>
         

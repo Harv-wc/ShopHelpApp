@@ -9,7 +9,12 @@
             </div>
             <div class="card-body">
                 @Model.Itemcost1<br />
-                <a class="btn btn-outline-success">Add</a>
+                <a class="btn btn-outline-success" 
+                   asp-controller="Home" 
+                   asp-action="UpdateShoppingList" 
+                   asp-route-value="1" 
+                   asp-route-name="@Model.Item.Itemname"
+                   asp-route-cost="@Model.Itemcost1">Add</a>
                 <a class="btn btn-outline-danger">Remove</a>
             </div>
         </div>
